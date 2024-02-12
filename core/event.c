@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0
 #include "event.h"
-#include "eventname.h"
+#include "eventtype.h"
 #include "subsurface-string.h"
 
 #include <string.h>
@@ -80,7 +80,7 @@ struct event *create_event(unsigned int time, int type, int flags, int value, co
 		break;
 	}
 
-	remember_event_name(name);
+	remember_event_type(ev);
 
 	return ev;
 }
@@ -101,4 +101,18 @@ bool same_event(const struct event *a, const struct event *b)
 	if (a->value != b->value)
 		return 0;
 	return !strcmp(a->name, b->name);
+}
+
+extern enum event_severity get_event_severity(const struct event *ev)
+{
+	switch (ev->flags & SAMPLE_FLAGS_SEVERITY_MASK) {
+	case SAMPLE_FLAGS_SEVERITY_INFO:
+		return EVENT_SEVERITY_INFO;
+	case SAMPLE_FLAGS_SEVERITY_WARN:
+		return EVENT_SEVERITY_WARN;
+	case SAMPLE_FLAGS_SEVERITY_ALARM:
+		return EVENT_SEVERITY_ALARM;
+	default:
+		return EVENT_SEVERITY_NONE;
+	}
 }

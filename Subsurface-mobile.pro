@@ -202,7 +202,7 @@ HEADERS += \
 	core/dive.h \
 	core/divecomputer.h \
 	core/event.h \
-	core/eventname.h \
+	core/eventtype.h \
 	core/extradata.h \
 	core/git-access.h \
 	core/globals.h \

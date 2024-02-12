@@ -3,7 +3,7 @@
 #include "profile-widget/profilescene.h"
 #include "core/device.h"
 #include "core/event.h"
-#include "core/eventname.h"
+#include "core/eventtype.h"
 #include "core/subsurface-string.h"
 #include "core/qthelper.h"
 #include "core/range.h"
@@ -656,7 +656,7 @@ void ProfileWidget2::contextMenuEvent(QContextMenuEvent *event)
 		}
 #endif
 	}
-	if (any_events_hidden())
+	if (any_event_types_hidden())
 		m.addAction(tr("Unhide all events"), this, &ProfileWidget2::unhideEvents);
 	m.exec(event->globalPos());
 }
@@ -701,11 +701,13 @@ void ProfileWidget2::hideSimilarEvents(DiveEventItem *item)
 {
 	const struct event *event = item->getEvent();
 
+	hide_event_type(event);
 	hideEvent(item);
 
 	if (!empty_string(event->name)) {
 		for (DiveEventItem *evItem: profileScene->eventItems) {
-			if (same_string(evItem->getEvent()->name, event->name) && evItem->getEvent()->flags == event->flags)
+			if (same_string(evItem->getEvent()->name, event->name) &&
+			    get_event_severity(evItem->getEvent()) == get_event_severity(event))
 				evItem->hide();
 		}
 	}
@@ -713,7 +715,7 @@ void ProfileWidget2::hideSimilarEvents(DiveEventItem *item)
 
 void ProfileWidget2::unhideEvents()
 {
-	show_all_events();
+	show_all_event_types();
 	for (DiveEventItem *item: profileScene->eventItems)
 		item->show();
 }
